@@ -1,0 +1,23 @@
+#num {
+	border: solid 1px gray;
+	margin-bottom: 25px;
+}
+
+#ana {
+	border: solid 1px gray;
+}
+
+#pinName {
+	width:100;
+}
+
+#pinNumber{
+}
+
+.row {
+	margin-left: 0px;
+}
+
+#selectPin{
+	margin-left: 15px;
+}
