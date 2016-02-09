@@ -1,4 +1,3 @@
-
 $(function() {
 	var tabs = $( "#tabs" ).tabs();
 	tabs.find( ".ui-tabs-nav" ).sortable({

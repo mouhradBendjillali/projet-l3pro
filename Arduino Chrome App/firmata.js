@@ -350,13 +350,13 @@ var Board = function(port, callback) {
         });
         board.once('reportversion', function () {
             board.versionReceived = true;
-            console.log("VERSION RECEIVED");
+            //console.log("VERSION RECEIVED");
             board.once('queryfirmware', function () {
-                console.log("FIRMWARE RECEIVED");
+                //console.log("FIRMWARE RECEIVED");
                 board.queryCapabilities(function() {
-                    console.log("CAPABILITIES RECEIVED");
+                    //console.log("CAPABILITIES RECEIVED");
                     board.queryAnalogMapping(function() {
-                        console.log("ANALOG MAPPING RECEIVED");
+                        //console.log("ANALOG MAPPING RECEIVED");
                         callback();
                     });
                 });

@@ -1,7 +1,6 @@
-function Arduino(tabPinN,tabPinA,oscillo,editeur){
+function Arduino(tabPinN,tabPinA,editeur){
 	this.tabPinN = tabPinN;
 	this.tabPinA = tabPinA;
-	this.oscillo = oscillo;
 	this.editeur = editeur;
 
 	this.showNum = function(){
@@ -10,27 +9,34 @@ function Arduino(tabPinN,tabPinA,oscillo,editeur){
 		    //console.log( "" + i + n.toHtml() );
 		    n.setNumber(i);
 		    htmlString += "<div class='row' id='D"+n.getNumber()+"'>";
-			console.log(n.getPinMode());
+			htmlString += n.htmlBase();
 		    htmlString += n.toHtml(n.getPinMode());
 		    htmlString += "</div>"; });
 		$("div#num").html(htmlString);
+		for(i = 0; i < this.tabPinN.length;i++){
+			if(i % 2 != 0){
+				$("#D"+i).css("background-color", "#f5f5f5");
+			}
+		}
 	}
-	
+
 	this.showAna = function(){
 		var htmlString = "";
 		$.each(this.tabPinA, function(i,n){
 		    //console.log( "" + i + n.toHtml() );
 			n.setNumber(i);
 		    htmlString += "<div class='row' id='A"+n.getNumber()+"'>";
-			console.log(n.getPinMode());
+			htmlString += n.htmlBase();
 		    htmlString += n.toHtml(n.getPinMode());
 		    htmlString += "</div>"; });
 		$("div#ana").html(htmlString);
+		for(i = 0; i < this.tabPinA.length;i++){
+			if(i % 2 != 0){
+				$("#A"+i).css("background-color", "#f5f5f5");
+			}
+		}
 	}
 
-	this.showOscillo = function(){
-		this.oscillo.afficher();
-	}
 	
 	this.showEditeur = function(){
 		this.editeur.afficher();

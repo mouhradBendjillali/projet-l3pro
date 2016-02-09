@@ -653,6 +653,7 @@ button.ui-button::-moz-focus-inner {
 .ui-slider {
 	position: relative;
 	text-align: left;
+	margin-left: 10px;
 }
 .ui-slider .ui-slider-handle {
 	position: absolute;
@@ -725,6 +726,7 @@ button.ui-button::-moz-focus-inner {
 	overflow: hidden;
 	padding: 0;
 	vertical-align: middle;
+	margin-right: 10px;
 }
 .ui-spinner-input {
 	border: none;
@@ -1223,3 +1225,4 @@ body .ui-tooltip {
 	filter: Alpha(Opacity=30); /* support: IE8 */
 	border-radius: 8px;
 }
+

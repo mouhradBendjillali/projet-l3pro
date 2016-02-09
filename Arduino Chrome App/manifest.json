@@ -11,7 +11,8 @@
   },
   "permissions": [
     "serial",
-    "fullscreen"
+    "fullscreen",
+    "storage"
   ],
   "icons": {
     "16": "icon16.png",

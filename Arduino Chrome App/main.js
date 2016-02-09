@@ -5,15 +5,6 @@
 var firmata = require('./firmata.js');
 var domBuilder = require('dombuilder');
 
-// window.log = log;
-
-//document.body.innerText = "QUAI-LAB ";
-
-// log.setup({
-//   top: "0",
-//   height: "auto",
-//   background: "#222"
-// });
 
 var modeNames = [
   "INPUT",
@@ -29,18 +20,18 @@ var ports;
 var statut = "Détacher";
 var board;
 
+var xmlSave = [];
 
 var numPinTab = [];
 var anaPinTab = [];
 var oscillo = "";
 var editeur = "";
 
-var arduino = new Arduino(numPinTab, anaPinTab, oscillo, editeur);
+var arduino = new Arduino(numPinTab, anaPinTab, editeur);
 
 //window.onload = function() {
 
   chrome.serial.getDevices(function (queriedPorts) {
-    //console.log(queriedPorts);
     ports = queriedPorts;
 
 
@@ -50,12 +41,9 @@ var arduino = new Arduino(numPinTab, anaPinTab, oscillo, editeur);
         option.value = i;
         option.text = ports[i].path;
         $("#ports").append(option);
-        //console.log(option);
-        //console.log($("#ports"));
     }
 
-	$("#selectBtn").click(function() {
-	  //console.log('clicked',$("#ports").val());
+	$("#connectBtn").click(function() {
 	  connect($("#ports").val());
 	});
 
@@ -66,19 +54,14 @@ var arduino = new Arduino(numPinTab, anaPinTab, oscillo, editeur);
 function connect(port){
     board = window.board = new firmata.Board(ports[port].path, function (err) {
     if (err) throw err;
-    //console.log("board", board);
 	
 	var pinTemp;
 	
-	console.log(board.pins);
 	board.pins.map(function (pin, i) {
-        //console.log(board.analogPins[i]);
         
 		if(pin.analogChannel == 127){
 			pinTemp = new pinNum();
 			arduino.getTabNum().push(pinTemp);
-			console.log(pinTemp);
-			//$("#pinMode"+i).on('change','', updateNum(arduino,i));
 		}
 		
     });
@@ -87,16 +70,11 @@ function connect(port){
 	board.analogPins.map(function (pin, i) {	
 		pinTemp = new pinAna();
 		arduino.getTabAna().push(pinTemp);
-		console.log(pinTemp);
-		//$("#pinMode"+i).on('change', '', updateAna(arduino,i));	
 	});
-	
-	console.log(arduino.getTabNum() + "\n" + arduino.getTabAna());
     
 	arduino.showNum();
 	arduino.showAna();
 	
-
 	updateAna();
 	updateNum();
 	
@@ -115,7 +93,7 @@ function updateNum(){
 				var num =  $("#pinMode" + pinNumber + " option:selected").val(); 
 				var pin = arduino.getPinNum(pinNumber);
 				pin.setPinMode($("#pinMode" + pinNumber + " option:selected").val());
-				$('#D' + pinNumber).html(pin.toHtml(num));
+				$("#action"+(pinNumber)).html(pin.toHtml(num));
 
 
         //Cette fonction initialise un spinner $( "#spinnerV" ) avec la valeur min à 0, et la valeur max à 255.
@@ -167,11 +145,10 @@ function updateNum(){
                     max: 180,
                     slide: function( event, ui ) {
                         $( "#spinner" + pinNumber ).val( ui.value );
-                        if(statut == "Attacher"){
+                        if(statut == "ON"){
                         	board.pinMode(pinNumber, board.MODES.SERVO);
 		                	board.servoWrite(pinNumber, ui.value );
 		                }
-		                //board.servoConfig(pinNumber, $("#min" + pinNumber).val(), $("#max" + pinNumber).val());
                     }
                 });
             });
@@ -180,7 +157,7 @@ function updateNum(){
                 $( "#spinner"+ pinNumber ).spinner( {
                     spin: function( event, ui ) {
                         $( "#slider-range"+ pinNumber ).slider( "option", "value", $( "#spinner"+ pinNumber ).spinner("value") );
-                        if(statut == "Attacher"){
+                        if(statut == "ON"){
                         	board.pinMode(pinNumber, board.MODES.SERVO);
 							board.servoWrite(pinNumber, ui.value );
 						}
@@ -203,7 +180,6 @@ function updateNum(){
                 {
                     if ( $( "#digitalSwitchLabelP" + pinNumber ).html() == "HIGH" ) 
                     {
-
 					    $( "#digitalSwitchLabelP" + pinNumber ).html("LOW");
 					    if($("#pinMode"+pinNumber).val() == "OUT"){
 						    board.pinMode(pinNumber, board.MODES.OUTPUT);
@@ -212,7 +188,6 @@ function updateNum(){
 		                }else if($("#pinMode"+pinNumber).val() == "IN"){
 						    board.pinMode(pinNumber, board.MODES.INPUT);
 		                    board.digitalRead(pinNumber, board.LOW);
-		                    
 		                }
                     }
                     else if ( $( "#digitalSwitchLabelP" + pinNumber ).html() == "LOW" )
@@ -231,16 +206,16 @@ function updateNum(){
 	                    
                         $( "#digitalSwitchLabelP" + pinNumber ).html("HIGH");
                     } 
-					else if ( $( "#digitalSwitchLabelP" + pinNumber ).html() == "Attacher" )
+					else if ( $( "#digitalSwitchLabelP" + pinNumber ).html() == "ON" )
                     {
-                        $( "#digitalSwitchLabelP" + pinNumber ).html("Détacher");
-                        statut = "Attacher";
+                        $( "#digitalSwitchLabelP" + pinNumber ).html("OFF");
+                        statut = "ON";
                         
                     } 
 					else
                     {
-                        $( "#digitalSwitchLabelP" + pinNumber ).html("Attacher");
-                        statut = "Détacher";
+                        $( "#digitalSwitchLabelP" + pinNumber ).html("ON");
+                        statut = "OFF";
                     }
 
                 });
@@ -277,7 +252,6 @@ function updateNum(){
                     }
                 });
             });
-            $("#pinMode"+pinNumber).change(updateNum());
 			});
 		}			
 	});
@@ -290,9 +264,8 @@ function updateAna(){
 		$("#pinModeA"+pinNumber).change(function(){
 			var ana =  $("#pinModeA" + pinNumber + " option:selected").val(); 
 			var pin = arduino.getPinAna(pinNumber);
-			//console.log(pinNumber);
 			pin.setPinMode($("#pinModeA" + pinNumber + " option:selected").val());
-			$('#A' + pinNumber).html(pin.toHtml(ana));
+			$("#actionAna"+pinNumber).html(pin.toHtml(ana));
 			
 			if($("#pinModeA"+pinNumber).val() == "IN"){
 			    board.pinMode(pinNumber, board.MODES.INPUT);
@@ -321,62 +294,205 @@ function updateAna(){
 		            } 
 		        });
 		    });
-			$("#pinModeA"+pinNumber).change(updateAna());
 		});
 		
 	});
 }
 
 
+$("#jouerEditeur").click(function(){
+	if($("#jouerEditeur").text() == "Jouer"){
+		$("#jouerEditeur").text("Stop");
+	}else{
+		$("#jouerEditeur").text("Jouer");
+	}
+});
+
+$("#masquerBtnNum").click(function(){
+	for(var i = 0; i < numPinTab.length;i++){
+		if($("#pinMode" + i).val() == "INACTIVE" && $("#masquerBtnNum").text() == "Masquer"){
+			$("#D" + i).css("display", "none");
+		}else if($("#D" + i).css("display") == "none"){
+			$("#D" + i).css("display", "block");
+		}
+	}
+	
+	if(arduino.getTabNum().length > 0 && arduino.getTabAna().length > 0){		
+		if($("#masquerBtnNum").text() == "Masquer"){
+			$("#masquerBtnNum").text("Afficher");
+		}else{
+			$("#masquerBtnNum").text("Masquer");
+		}	
+	}
+});
+
+$("#masquerBtnAna").click(function(){	
+	for(var i = 0; i < anaPinTab.length;i++){
+		if($("#pinModeA" + i).val() == "INACTIVE" && $("#masquerBtnAna").text() == "Masquer"){
+			$("#A" + i).css("display", "none");
+		}else if($("#A" + i).css("display") == "none"){
+			$("#A" + i).css("display", "block");
+		}
+	}
+	
+	if(arduino.getTabNum().length > 0 && arduino.getTabAna().length > 0){	
+		if($("#masquerBtnAna").text() == "Masquer"){
+			$("#masquerBtnAna").text("Afficher");
+		}else{
+			$("#masquerBtnAna").text("Masquer");
+		}
+	}
+});
+   
+
+
+$("#sauverBtn").click(function(){
+	if(arduino.getTabNum().length > 0 && arduino.getTabAna().length > 0){	
+		$("#fileName").val("");
+		$( "#dialog-confirm" ).dialog({
+		  resizable: false,
+		  width: 445,
+	      modal: true,
+	      buttons: {
+	        "Sauvegarder": function() {
+		      saveFile($("#fileName").val());
+	          $( this ).dialog( "close" );
+	        },
+	        "Annuler": function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+	}else{
+		$( "#dialog-error" ).dialog({
+		  resizable: false,
+		  width: 445,
+	      modal: true,
+	      buttons: {
+	        Ok: function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+	}
+	
+});
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-function onChange(evt) {
-    var target = evt.target.name.split("-");
-    var command = target[0];
-    var pin = parseInt(target[1], 10);
-    var value = evt.target.checked ? 1 : 0;
-
-    console.log("onChange", command, pin, value);
-
-    if (command === "mode") {
-      var input = this["value-" + pin];
-      console.log(input);
-      board.pinMode(pin, value);
-      if (value === board.MODES.INPUT) {
-        input.disabled = true;
-        board.digitalRead(pin, function (value) {
-          input.checked = value;
-          console.log('read',pin, value);
-        });
-      }else{
-        input.disabled = true;
-      }
-    }
-    else if (command === "value") {
-      board.digitalWrite(pin, value);
-    }
-
-  }
-
-function onSubmit(evt) {
-evt.preventDefault();
+function saveFile(fileName) {
+	if(fileName != ""){
+		xmlSave.name = fileName+'.xml';
+	}else{
+		xmlSave.name = 'arduino_config.xml';
+	}
+	
+	xmlSave.content = "";
+	var numPins = [];
+	var anaPins = [];
+	var pin = [];
+	
+	//on récupère toutes les pins Numériques dont la valeur du select est différente de "inactive".
+	$("#num>.row").each(function(index) {
+	
+		if( $(this).find(":selected").val() !== "INACTIVE" )
+		{
+			//pour chaque pin numerique, on stock son nom, son id, et son mode
+			pin = [];
+			pin.name = $(this).find(".pinName").val();
+			pin.id = $(this).find(".pinNumber").text();
+			pin.mode = $(this).find(":selected").val();
+			numPins.push(pin);
+		}		
+	});
+	
+		//on récupère toutes les pins Analogiques dont la valeur du select est différente de "inactive".
+		$("#ana>.row").each(function(index) {
+	
+		if( $(this).find(":selected").val() !== "INACTIVE" )
+		{
+			
+			//pour chaque pin analogique, on stock son nom, son id, et son mode
+			pin = [];
+			pin.name = $(this).find(".pinName").val();
+			pin.id = $(this).find(".pinNumber").text();
+			pin.mode = $(this).find(":selected").val();
+			anaPins.push(pin);
+		}		
+	});
+	
+	xmlSave.content += '<arduino type=""> \
+				\n\t<pinums>';
+				
+	$.each(numPins, function(index) {
+		xmlSave.content += '\n\t\t<pinnum name="' + this.name + '" id="' + this.id + '" mode="' + this.mode + '" />';
+	});
+	
+	xmlSave.content += '\n\t</pinums> \
+			\n\t<pinanas>';
+			
+	$.each(anaPins, function(index) {
+		xmlSave.content += '\n\t\t<pinana name="' + this.name + '" id="' + this.id + '" mode="' + this.mode + '" />';
+	});
+	
+	xmlSave.content += '\n\t</pinanas>\n</arduino>';
+	
+	var blob = new Blob([xmlSave.content], {type:'text/plain;charset=utf-8'});
+	saveAs(blob, xmlSave.name);
 }
-  
-*/
 
+
+
+$("#chargerBtn").click(function(){
+	if(arduino.getTabNum().length > 0 && arduino.getTabAna().length > 0){	
+		$("#loadFile").click();
+	}else{
+		$( "#dialog-error" ).dialog({
+		  resizable: false,
+		  width: 445,
+	      modal: true,
+	      buttons: {
+	        Ok: function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+	}
+});
+
+
+$("#loadFile").change(function(event) {
+    var input = event.target;
+
+    var reader = new FileReader();
+
+    reader.onload = function(){
+      var text = $.parseXML(reader.result);
+      
+      $(text).find('pinnum').each(function(index){
+	      var name = $(this).attr("name");
+	      var id = $(this).attr("id");
+	      var mode = $(this).attr("mode");
+	      
+	      $("#"+id).find('input').val(name);
+		  $("#"+id).find('select').val(mode);
+		  $("#"+id).find('select').change();
+		  
+	  });
+	  
+	  $(text).find('pinana').each(function(index){
+	      var name = $(this).attr("name");
+	      var id = $(this).attr("id");
+	      var mode = $(this).attr("mode");
+	      
+	      $("#"+id).find('input').val(name);
+		  $("#"+id).find('select').val(mode);
+		  $("#"+id).find('select').change();
+		  
+	  });
+
+    };
+    
+    reader.readAsText(input.files[0]);
+});
 

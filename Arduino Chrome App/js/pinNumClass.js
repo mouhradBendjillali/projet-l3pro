@@ -33,23 +33,23 @@ function pinNum(){
     this.htmlBase = function() {
     
         var htmlString = "";
-        htmlString += "<div class='col-md-1'><input type='text' id='pinName' placeholder='"+ this.getName() +"'style='width:75px'></input></div>";
-		var num = this.getNumber() + 2;
-        htmlString += "<div class='col-md-1'><span id='pinNumber''>D" + num + "</span></div>";
+        htmlString += "<input type='text' class='pinName spaceDiv' placeholder='"+ this.getName() +"'>";
+		var num = this.getNumber();
+        htmlString += "<span class='spaceDiv pinNumber'>D" + num + "</span>";
+        htmlString += "<div class='inlineDiv spaceDiv'><select id='pinMode" + this.getNumber() + "'>";
+        htmlString += "<option selected='selected' value='INACTIVE'>INACTIVE</option>";
+        htmlString += "<option value='IN'>IN</option>";
+        htmlString += "<option value='OUT'>OUT</option>";
+        htmlString += "<option value='PWM'>PWM</option>";
+        htmlString += "<option value='SERVO'>SERVO</option>";
+        htmlString += "</select></div><div class='inlineDiv spaceDiv' id='action" + num + "'></div>";
         
 		return htmlString;
     }
 
     this.htmlInactive = function() {
     
-        var htmlString = this.htmlBase();
-            htmlString += "<div class='col-md-2' id='selectPin'><select id='pinMode" + this.getNumber() + "'>";
-            htmlString += "<option selected='selected' value='INACTIVE'>INACTIVE</option>";
-            htmlString += "<option value='IN'>IN</option>";
-            htmlString += "<option value='OUT'>OUT</option>";
-            htmlString += "<option value='PWM'>PWM</option>";
-            htmlString += "<option value='SERVO'>SERVO</option>";
-            htmlString += "</select></div>";
+            var htmlString = "";
         
         return htmlString;
     
@@ -57,33 +57,17 @@ function pinNum(){
 
     this.htmlIn = function() {
     
-        var htmlString = this.htmlBase();
-        htmlString += "<div class='col-md-2' id='selectPin'><select id='pinMode" + this.getNumber() + "'>";
-        htmlString += "<option value='INACTIVE'>INACTIVE</option>";
-        htmlString += "<option selected='selected' value='IN'>IN</option>";
-        htmlString += "<option value='OUT'>OUT</option>";
-        htmlString += "<option value='PWM'>PWM</option>";
-        htmlString += "<option value='SERVO'>SERVO</option>";
-        htmlString += "</select></div>";
-        htmlString += "<div class='col-md-2'><input type='checkbox' id='digitalSwitch" + this.getNumber() + "' size='8' >";
-		htmlString += "<label for='digitalSwitch" + this.getNumber() + "' id='digitalSwitchLabel" + this.getNumber() + "'><div id='digitalSwitchLabelP" + this.getNumber() + "'>LOW</div></label></div>";
-        htmlString += "<div class='col-md-1'><input type='checkbox'></div>";
+        var htmlString = "<input class='spaceDiv' type='checkbox' id='digitalSwitch" + this.getNumber() + "' size='8' >";
+		htmlString += "<label class='spaceDiv' for='digitalSwitch" + this.getNumber() + "' id='digitalSwitchLabel" + this.getNumber() + "'><div id='digitalSwitchLabelP" + this.getNumber() + "'>LOW</div></label>";
+        htmlString += "<div class='checkOscillo inlineDiv'><input type='checkbox'></div>";
         
         return htmlString;    
     }
 
     this.htmlOut = function() {
     
-	var htmlString = this.htmlBase();
-        htmlString += "<div class='col-md-2' id='selectPin'><select id='pinMode" + this.getNumber() + "'>";
-        htmlString += "<option value='INACTIVE'>INACTIVE</option>";
-        htmlString += "<option value='IN'>IN</option>";
-        htmlString += "<option selected='selected' value='OUT'>OUT</option>";
-        htmlString += "<option value='PWM'>PWM</option>";
-        htmlString += "<option value='SERVO'>SERVO</option>";
-        htmlString += "</select></div>";
-        htmlString += "<div class='col-md-2'><input type='checkbox' id='digitalSwitch" + this.getNumber() + "' size='8' >";
-		htmlString += "<label for='digitalSwitch" + this.getNumber() + "' id='digitalSwitchLabel" + this.getNumber() + "'><div id='digitalSwitchLabelP" + this.getNumber() + "'>LOW</div></label></div>";
+        var htmlString = "<input class='spaceDiv' type='checkbox' id='digitalSwitch" + this.getNumber() + "' size='8' >";
+		htmlString += "<label class='spaceDiv' for='digitalSwitch" + this.getNumber() + "' id='digitalSwitchLabel" + this.getNumber() + "'><div id='digitalSwitchLabelP" + this.getNumber() + "'>LOW</div></label>";
 
         return htmlString;
     
@@ -91,23 +75,13 @@ function pinNum(){
 
     this.htmlServo = function() {
     
-        var htmlString = this.htmlBase();
-
-        htmlString += "<div class='col-md-2' id='selectPin'><select id='pinMode" + this.getNumber() + "'>";
-        htmlString += "<option value='INACTIVE'>INACTIVE</option>";
-        htmlString += "<option value='IN'>IN</option>";
-        htmlString += "<option value='OUT'>OUT</option>";
-        htmlString += "<option value='PWM'>PWM</option>";
-        htmlString += "<option selected='selected' value='SERVO'>SERVO</option>";
-        htmlString += "</select></div>";
-        htmlString += "<div class='col-md-3'><input type='checkbox' id='digitalSwitch" + this.getNumber() + "' >";
-		htmlString += "<label for='digitalSwitch" + this.getNumber() + "' id='digitalSwitchLabel" + this.getNumber() + "'><div id='digitalSwitchLabelP" + this.getNumber() + "'>Attacher</div></label></div>";
-		htmlString +="<div class='col-md-1'><input type='checkbox'></div>";
-        htmlString += "<div class='col-md-10'><div class='col-md-2'><div id='slider-range" + this.getNumber() + "'></div></div>";
-        htmlString += "<div class='col-md-3'><input type='text' id='spinner" + this.getNumber() + "' min='0' max='180' readonly size='2'></div>";
-		htmlString += "<div class='col-md-3'><input type='text' id='min" + this.getNumber() + "' min='0' max='180' value='0' readonly size='2'></div>";
-		htmlString += "<div class='col-md-3'><input type='text' id='max" + this.getNumber() + "' min='0' max='180' value='180' readonly size='2'></div></div>";
-
+        var htmlString = "<input class='spaceDiv' type='checkbox' id='digitalSwitch" + this.getNumber() + "' >";
+		htmlString += "<label class='inlineDiv spaceDiv' for='digitalSwitch" + this.getNumber() + "' id='digitalSwitchLabel" + this.getNumber() + "'><div id='digitalSwitchLabelP" + this.getNumber() + "'>ON</div></label>";
+        htmlString += "<div class='inlineDiv sliderRange spaceDiv' id='slider-range" + this.getNumber() + "'></div>";
+        htmlString += "<input class='spaceDiv' type='text' id='spinner" + this.getNumber() + "' min='0' max='180' readonly size='3'>";
+		htmlString += "<input class='spaceDiv' type='text' id='min" + this.getNumber() + "' min='0' max='180' value='0' readonly size='3'>";
+		htmlString += "<input class='spaceDiv' type='text' id='max" + this.getNumber() + "' min='0' max='180' value='180' readonly size='3'>";
+		htmlString +="<div class='checkOscillo inlineDiv'><input type='checkbox'></div>";
         
         
         return htmlString;
@@ -116,26 +90,16 @@ function pinNum(){
 
     this.htmlPWM = function() {
     
-        var htmlString = this.htmlBase();
 
-        htmlString += "<div class='col-md-2' id='selectPin'><select id='pinMode" + this.getNumber() + "' >";
-        htmlString += "<option value='INACTIVE'>INACTIVE</option>";
-        htmlString += "<option value='IN'>IN</option>";
-        htmlString += "<option value='OUT'>OUT</option>";
-        htmlString += "<option selected='selected' value='PWM'>PWM</option>";
-        htmlString += "<option value='SERVO'>SERVO</option>";
-        htmlString += "</select></div>";
-        htmlString += "<div class='col-md-2'><div id='slider-range-v" + this.getNumber() + "'></div></div>";
-        htmlString += "<div class='col-md-2'><input type='text' id='spinnerV" + this.getNumber() + "' min='0' max='255' readonly size='4'></div>";
-        htmlString += "<div class='col-md-2'><input type='text' id='afficheVolt"+ this.getNumber() +"' readonly style='width:75px'></input></div>";
-        htmlString += "<div class='col-md-1'><input type='checkbox'></div>";
+        var htmlString = "<div class='inlineDiv sliderRange spaceDiv' id='slider-range-v" + this.getNumber() + "'></div>";
+        htmlString += "<input class='spaceDiv' type='text' id='spinnerV" + this.getNumber() + "' min='0' max='255' readonly size='3'>";
+        htmlString += "<input class='voltRange spaceDiv' type='text' id='afficheVolt"+ this.getNumber() +"' readonly >";
+        htmlString += "<div class='checkOscillo inlineDiv'><input type='checkbox'></div>";
         
         
         return htmlString;
     
     }
-
-
 }
 
 
