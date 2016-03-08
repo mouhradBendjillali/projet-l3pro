@@ -1,0 +1,23 @@
+{
+  "name": "EducativeLAB",
+  "version": "0.3.0",
+  "manifest_version": 3,
+  "offline_enabled": true,
+  "description": "Controlling an Arduino throught the App",
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions": [
+    "serial",
+    "fullscreen",
+    "storage"
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "64": "icon64.png",
+    "128": "icon128.png"
+  }
+}
