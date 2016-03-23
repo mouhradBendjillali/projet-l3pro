@@ -21,9 +21,41 @@ var board;
 
 var xmlSave = [];
 
+
+
 var numPinTab = [];
 var anaPinTab = [];
-var oscillo = "";
+
+var oscillo = [{
+			type: "spline",
+			showInLegend: true, //define legend text
+			legendText:"",
+			dataPoints: [] 
+		},
+		{
+			type: "spline",
+			showInLegend: true, //define legend text
+			legendText:"",
+			dataPoints: [] 
+		},
+		{
+			type: "spline",
+			showInLegend: true, //define legend text
+			legendText:"",
+			dataPoints: [] 
+		},
+		{
+			type: "spline",
+			showInLegend: true, //define legend text
+			legendText:"",
+			dataPoints: [] 
+		},
+		{
+			type: "spline",
+			showInLegend: true, //define legend text
+			legendText:"",
+			dataPoints: [] 
+		}];
 var editeur = "";
 
 var script = [];
@@ -108,11 +140,18 @@ function updateNum(){
 				$(function(){
 					$("#oscilloNum"+pinNumber).click(function () {
 					    if ($(this).is(':checked')) {
-							canvasOscillo(pinNumber);
+							oscillo[0].dataPoints.push({
+								x: 0,
+								y: 12
+							});
+							canvasOscillo(oscillo);
+							//console.log(oscillo[0].dataPoints);
 					    } 
 					    //dialog error else if ( > 5lignes du Graph) 
 					});
 				});
+				
+				
 				//On initialise le mode et la valeur (nulle) envoyés
 				board.pinMode(pinNumber, board.MODES.OUTPUT);
 				board.digitalWrite(pinNumber, board.LOW);
@@ -164,8 +203,8 @@ function updateNum(){
 			                board.analogWrite(pinNumber, ui.value );
 	                    },
                         stop: function(event, ui) {
-                            $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+ui.value+');\n');
-                            var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "PWM", value : ui.value};
+                            $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+$( "#spinnerV"+ pinNumber ).spinner("value")+');\n');
+                            var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "PWM", value : $( "#spinnerV"+ pinNumber ).spinner("value")};
                             script.push(instruction);
                         }
 	                });
@@ -228,15 +267,16 @@ function updateNum(){
 	                        $( "#slider-range"+ pinNumber ).slider( "option", "value", $( "#spinner"+ pinNumber ).spinner("value") );
 	                        if(statut == "ON"){
 	                        	board.pinMode(pinNumber, board.MODES.SERVO);
-								board.servoWrite(pinNumber, ui.value );
+								board.servoWrite(pinNumber, $( "#spinner"+ pinNumber ).spinner("value") );
 							}
 	
 	                    },
 	                    stop: function(event, ui) {
                             if(statut == "ON")
                             {
-                                $("#editor").val($("#editor").val() + 'board.servoWrite('+pinNumber+', '+ui.value+');\n');
-                                var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "SERVO", value : ui.value};
+                                $("#editor").val($("#editor").val() + 'board.servoWrite('+pinNumber+', '+$( "#spinner"+ pinNumber ).spinner("value")+');\n');
+                                var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "SERVO", value : $( "#spinner"+ pinNumber ).spinner("value")};
+                                console.log(instruction);
                                 script.push(instruction);
                             }
                         }

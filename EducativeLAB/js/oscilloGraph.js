@@ -1,9 +1,5 @@
-$(window).load(function canvasDefault(){
+$(window).load(function canvasOscill(){
 	var dps0 = []; // dataPoints
-	var dps1 = [];
-	var dps2 = [];
-	var dps3 = [];
-	var dps4 = [];
 	
 	var data = [{
 				type: "line",
@@ -30,18 +26,17 @@ $(window).load(function canvasDefault(){
 	});
 
 	var xVal = 0;
-	var yVal = 100;	
+	var yVal = 0;	
 	var updateInterval = 100;
 	var dataLength = 500; // number of dataPoints visible at any point 
  
-	var updateChart = function (count) {
-		count = count || 1;
-		// count is number of times loop runs to generate random dataPoints.
-		
-		for (var j = 0; j < count; j++) {	
-			yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
-			xVal++;
-		};
+	var updateChart = function () {
+	
+			dps0.push({
+				x: xVal,
+				y: yVal
+			});
+			
 		if (dps0.length > dataLength)
 		{
 			dps0.shift();	 				
@@ -59,22 +54,17 @@ $(window).load(function canvasDefault(){
 });
 
 
-function canvasOscillo(pinNumber) {
+function canvasOscillo(oscillo) {
 	
-	var dps0 = []; // dataPoints
-	var dps1 = [];
-	var dps2 = [];
-	var dps3 = [];
-	var dps4 = [];
-	
-	var data = [{
+	/*var data = [{
 			type: "spline",
+			legendText:"",
 			showInLegend: true, //define legend text
 			dataPoints: dps0 
 		},
 		{
 			type: "spline",
-			showInLegend: 'trou', //define legend text
+			showInLegend: true, //define legend text
 			dataPoints: dps1 
 		},
 		{
@@ -91,7 +81,9 @@ function canvasOscillo(pinNumber) {
 			type: "spline",
 			showInLegend: true, //define legend text
 			dataPoints: dps4 
-		}];
+		}];*/
+		
+	var data = oscillo;
 	var chart = new CanvasJS.Chart("chartContainer",{
 		title :{
 			text: "Oscilloscope"
@@ -111,7 +103,7 @@ function canvasOscillo(pinNumber) {
 	});
 
 	var xVal = 0;
-	var yVal = 100;	
+
 	var updateInterval = 100;
 	var dataLength = 500; // number of dataPoints visible at any point
 
@@ -119,43 +111,30 @@ function canvasOscillo(pinNumber) {
 		count = count || 1;
 		// count is number of times loop runs to generate random dataPoints.
 		
-		for (var j = 0; j < count; j++) {	
-			yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
-			dps0.push({
-				x: xVal+3,
-				y: yVal+20
-			});
-			dps1.push({
-				x: xVal+5,
-				y: yVal+90
-			});
-			dps2.push({
-				x: xVal+9,
-				y: yVal+120
-			});
-			dps3.push({
-				x: xVal+10,
-				y: yVal+50
-			});
-			dps4.push({
-				x: xVal+16,
-				y: yVal+170
+		for (var j = 1; j < count; j++) {
+			var yVal = data[0].dataPoints[j].y;
+			data[0].dataPoints[j].push({
+				x: xVal,
+				y: yVal
 			});
 			xVal++;
 		};
-		if (dps0.length > dataLength || dps1.length > dataLength || dps2.length > dataLength || dps3.length > dataLength || dps4.length > dataLength)
+		
+		if (oscillo[0].dataPoints.length > dataLength || oscillo[1].dataPoints.length > dataLength || oscillo[2].dataPoints.length > dataLength || oscillo[3].dataPoints.length > dataLength || oscillo[4].dataPoints.length > dataLength)
 		{
-			dps0.shift();
-			dps1.shift();
-			dps2.shift();
-			dps3.shift();
-			dps4.shift();	 				
+			oscillo[0].dataPoints.shift();
+			oscillo[1].dataPoints.shift();
+			oscillo[2].dataPoints.shift();
+			oscillo[3].dataPoints.shift();
+			oscillo[4].dataPoints.shift();	 				
 		}
 		
 		chart.render();		
 
 	};
 
+	//C'est ca qu'il faut faire avec j a la place du second 0
+	console.log(data[0].dataPoints[0].y);
 	// generates first set of dataPoints
 	updateChart(dataLength); 
 
