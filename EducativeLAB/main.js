@@ -31,30 +31,6 @@ var oscillo = [{
 			showInLegend: true, //define legend text
 			legendText:"",
 			dataPoints: [] 
-		},
-		{
-			type: "spline",
-			showInLegend: true, //define legend text
-			legendText:"",
-			dataPoints: [] 
-		},
-		{
-			type: "spline",
-			showInLegend: true, //define legend text
-			legendText:"",
-			dataPoints: [] 
-		},
-		{
-			type: "spline",
-			showInLegend: true, //define legend text
-			legendText:"",
-			dataPoints: [] 
-		},
-		{
-			type: "spline",
-			showInLegend: true, //define legend text
-			legendText:"",
-			dataPoints: [] 
 		}];
 var editeur = "";
 
@@ -142,7 +118,7 @@ function updateNum(){
 					    if ($(this).is(':checked')) {
 							oscillo[0].dataPoints.push({
 								x: 0,
-								y: 12
+								y: $( "#spinnerV"+ pinNumber ).spinner("value")
 							});
 							canvasOscillo(oscillo);
 							//console.log(oscillo[0].dataPoints);
@@ -204,7 +180,12 @@ function updateNum(){
 	                    },
                         stop: function(event, ui) {
                             $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+$( "#spinnerV"+ pinNumber ).spinner("value")+');\n');
-                            var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "PWM", value : $( "#spinnerV"+ pinNumber ).spinner("value")};
+                            var instruction = {
+	                            pin : 0, 
+	                            pinNumber : pinNumber, 
+	                            pinMode : "PWM", 
+	                            value : $( "#spinnerV"+ pinNumber ).spinner("value")
+	                        };
                             script.push(instruction);
                         }
 	                });
@@ -375,7 +356,6 @@ function updateNum(){
 			                }else if($("#pinMode"+pinNumber).val() == "IN"){
 							    board.pinMode(pinNumber, board.MODES.INPUT);
 			                    board.digitalRead(pinNumber, board.HIGH);
-			                    
 			                }
 		                    
 	                        $( "#digitalSwitchLabelP" + pinNumber ).html("HIGH");
@@ -419,16 +399,42 @@ function updateAna(){
 			
 			
 			//IN
-			
+			var test;
+			var xVal = 0;
 			//On passe la pin en mode INPUT, On affiche la valeur reçue
 			if($("#pinModeA"+pinNumber).val() == "IN"){
 			    board.pinMode(pinNumber, board.MODES.INPUT);
                 board.analogRead(pinNumber, function(value){
 	                $("#afficheVal"+pinNumber).val(value);
 	                $( "#afficheVoltAna"+ pinNumber ).val(( value / 204.6).toFixed(2) + " volts");
-	            }); 
+	                //test afin de ne remplir le tableau si input checked & oscillo vide
+					oscillo[0].dataPoints.push({
+						x: xVal,
+						y: value
+					});
+					xVal++;
+					
+					if (oscillo[0].dataPoints.length > 1000 )
+					{
+						oscillo[0].dataPoints.shift();
+					}
+	            });
+	            
             }
 		    
+		    $(function(){
+				$("#oscilloAna"+pinNumber).change(function () {
+				    if ($(this).is(':checked')) {
+					    oscillo[0].legendText = "A" + pinNumber;
+						canvasOscillo(oscillo);
+				    }else{
+					    oscillo[0].dataPoints.length = 0;
+						oscilloVide();
+					}
+				    //dialog error else if ( > 5lignes du Graph) 
+				});
+			});
+			
        		/*
 			 * Cette fonction utilise un bouton radio stylisé $( "#digitalSwitchA" ) sous la forme d'un interrupteur
              * pour définir la valeur (HIGH ou LOW)
