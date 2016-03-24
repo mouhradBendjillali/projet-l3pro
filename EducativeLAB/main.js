@@ -156,7 +156,7 @@ function updateNum(){
 	                    },
 	                    stop: function(event, ui) {
                             $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+ui.value+');\n');
-                            $("#editor").val($("#editor").val() + ' => Pin : ' + pinNumber + ' => ' + ui.value + '\n');
+                            $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => ' + ui.value + '\n');
                             var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "PWM", value : ui.value};
                             script.push(instruction);
                         }
@@ -181,7 +181,7 @@ function updateNum(){
 	                    },
                         stop: function(event, ui) {
                             $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+$( "#spinnerV"+ pinNumber ).spinner("value")+');\n');
-                            $("#editor").val($("#editor").val() + ' => Pin : ' + pinNumber + ' => ' + $( "#spinnerV"+ pinNumber ).spinner("value") + '\n');
+                            $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => ' + $( "#afficheVolt"+ pinNumber ).val() + '\n');
                             var instruction = {
 	                            pin : 0, 
 	                            pinNumber : pinNumber, 
@@ -231,7 +231,7 @@ function updateNum(){
                             if(statut == "ON")
                             {
                                 $("#editor").val($("#editor").val() + 'board.servoWrite('+pinNumber+', '+ui.value+');\n');
-                                $("#editor").val($("#editor").val() + ' => Servo : ' + pinNumber + ', Tourne à : ' + ui.value + '°\n');
+                                $("#editor").val($("#editor").val() + ' -- Servo : ' + pinNumber + ', Tourne à : ' + ui.value + '°\n');
                                 var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "SERVO", value : ui.value};
                                 script.push(instruction);
                             }
@@ -259,7 +259,7 @@ function updateNum(){
                             if(statut == "ON")
                             {
                                 $("#editor").val($("#editor").val() + 'board.servoWrite('+pinNumber+', '+$( "#spinner"+ pinNumber ).spinner("value")+');\n');
-                                $("#editor").val($("#editor").val() + ' => Servo : ' + pinNumber + ', Tourne à : ' + $( "#spinnerV"+ pinNumber ).spinner("value") + '\n');
+                                $("#editor").val($("#editor").val() + ' -- Servo : ' + pinNumber + ', Tourne à : ' + $( "#spinner"+ pinNumber ).spinner("value") + '\n');
                                 var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "SERVO", value : $( "#spinner"+ pinNumber ).spinner("value")};
                                 console.log(instruction);
                                 script.push(instruction);
@@ -340,7 +340,7 @@ function updateNum(){
 			                    var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "OUT", value : board.LOW};
                                 script.push(instruction);
 			                    $("#editor").val($("#editor").val() + 'board.digitalWrite('+pinNumber+',board.LOW);\n');
-			                    $("#editor").val($("#editor").val() + ' => Pin : ' + pinNumber + ' => LOW \n');
+			                    $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => LOW \n');
 			                      
 			                }else if($("#pinMode"+pinNumber).val() == "IN"){
 							    board.pinMode(pinNumber, board.MODES.INPUT);
@@ -356,7 +356,7 @@ function updateNum(){
 			                    var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "OUT", value : board.HIGH};
 								script.push(instruction);
 			                    $("#editor").val($("#editor").val()+'board.digitalWrite('+pinNumber+',board.HIGH);\n');
-			                    $("#editor").val($("#editor").val() + ' => Pin : ' + pinNumber + ' => HIGH \n');
+			                    $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => HIGH \n');
 			                  
 			                  //Permet d'éteindre la led selectionnée (via pinNumber)  
 			                }else if($("#pinMode"+pinNumber).val() == "IN"){
