@@ -33,7 +33,7 @@ var oscillo = [{
 			dataPoints: [] 
 		}];
 var editeur = "";
-
+var macro = false;
 var script = [];
 var currentInstruction = 0;
 
@@ -155,10 +155,13 @@ function updateNum(){
 			                board.analogWrite(pinNumber, ui.value);
 	                    },
 	                    stop: function(event, ui) {
-                            $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+ui.value+');\n');
-                            $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => ' + ui.value + '\n');
-                            var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "PWM", value : ui.value};
-                            script.push(instruction);
+	                        if(macro)
+	                        {
+                                $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+ui.value+');\n');
+                                $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => ' + ui.value + '\n');
+                                var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "PWM", value : ui.value};
+                                script.push(instruction);
+                            }
                         }
 	                });
 	            });
@@ -180,15 +183,18 @@ function updateNum(){
 			                board.analogWrite(pinNumber, ui.value );
 	                    },
                         stop: function(event, ui) {
-                            $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+$( "#spinnerV"+ pinNumber ).spinner("value")+');\n');
-                            $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => ' + $( "#afficheVolt"+ pinNumber ).val() + '\n');
-                            var instruction = {
-	                            pin : 0, 
-	                            pinNumber : pinNumber, 
-	                            pinMode : "PWM", 
-	                            value : $( "#spinnerV"+ pinNumber ).spinner("value")
-	                        };
-                            script.push(instruction);
+                            if(macro)
+                            {
+                                $("#editor").val($("#editor").val() + 'board.analogWrite('+pinNumber+', '+$( "#spinnerV"+ pinNumber ).spinner("value")+');\n');
+                                $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => ' + $( "#afficheVolt"+ pinNumber ).val() + '\n');
+                                var instruction = {
+	                                pin : 0, 
+	                                pinNumber : pinNumber, 
+	                                pinMode : "PWM", 
+	                                value : $( "#spinnerV"+ pinNumber ).spinner("value")
+	                            };
+                                script.push(instruction);
+                            }
                         }
 	                });
 	                $( "#slider-range-v" + pinNumber ).slider( {
@@ -228,7 +234,7 @@ function updateNum(){
 			                }
 	                    },
                         stop: function(event, ui) {
-                            if(statut == "ON")
+                            if(statut == "ON" && macro)
                             {
                                 $("#editor").val($("#editor").val() + 'board.servoWrite('+pinNumber+', '+ui.value+');\n');
                                 $("#editor").val($("#editor").val() + ' -- Servo : ' + pinNumber + ', Tourne à : ' + ui.value + '°\n');
@@ -256,7 +262,7 @@ function updateNum(){
 	
 	                    },
 	                    stop: function(event, ui) {
-                            if(statut == "ON")
+                            if(statut == "ON" && macro)
                             {
                                 $("#editor").val($("#editor").val() + 'board.servoWrite('+pinNumber+', '+$( "#spinner"+ pinNumber ).spinner("value")+');\n');
                                 $("#editor").val($("#editor").val() + ' -- Servo : ' + pinNumber + ', Tourne à : ' + $( "#spinner"+ pinNumber ).spinner("value") + '\n');
@@ -337,10 +343,13 @@ function updateNum(){
 						    if($("#pinMode"+pinNumber).val() == "OUT"){
 							    board.pinMode(pinNumber, board.MODES.OUTPUT);
 			                    board.digitalWrite(pinNumber, board.LOW);
-			                    var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "OUT", value : board.LOW};
-                                script.push(instruction);
-			                    $("#editor").val($("#editor").val() + 'board.digitalWrite('+pinNumber+',board.LOW);\n');
-			                    $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => LOW \n');
+			                    if( macro )
+			                    {
+			                        var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "OUT", value : board.LOW};
+                                    script.push(instruction);
+			                        $("#editor").val($("#editor").val() + 'board.digitalWrite('+pinNumber+',board.LOW);\n');
+			                        $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => LOW \n');
+			                    }
 			                      
 			                }else if($("#pinMode"+pinNumber).val() == "IN"){
 							    board.pinMode(pinNumber, board.MODES.INPUT);
@@ -353,10 +362,13 @@ function updateNum(){
 		                    if($("#pinMode"+pinNumber).val() == "OUT"){
 							    board.pinMode(pinNumber, board.MODES.OUTPUT);
 			                    board.digitalWrite(pinNumber, board.HIGH);
-			                    var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "OUT", value : board.HIGH};
-								script.push(instruction);
-			                    $("#editor").val($("#editor").val()+'board.digitalWrite('+pinNumber+',board.HIGH);\n');
-			                    $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => HIGH \n');
+			                    if(macro)
+			                    {
+			                        var instruction = {pin : 0, pinNumber : pinNumber, pinMode : "OUT", value : board.HIGH};
+								    script.push(instruction);
+			                        $("#editor").val($("#editor").val()+'board.digitalWrite('+pinNumber+',board.HIGH);\n');
+			                        $("#editor").val($("#editor").val() + ' -- Pin : ' + pinNumber + ' => HIGH \n');
+			                    }
 			                  
 			                  //Permet d'éteindre la led selectionnée (via pinNumber)  
 			                }else if($("#pinMode"+pinNumber).val() == "IN"){
@@ -478,6 +490,16 @@ $("#jouerEditeur").click(function(){
 		interprete();
 	}else{
 		$("#jouerEditeur").text("Jouer");
+	}
+});
+
+$("#enregistrerEditeur").click(function(){
+	if($("#enregistrerEditeur").text() == "Enregistrer"){
+		$("#enregistrerEditeur").text("Arrêter");
+		macro = true;
+	}else{
+		$("#enregistrerEditeur").text("Enregistrer");
+		macro = false;
 	}
 });
 
@@ -685,58 +707,60 @@ $("#loadFile").change(function(event) {
 });
 
 function interprete(){
-    
-    if(currentInstruction >= 0 && currentInstruction < script.length)
-    {
-        setTimeout(function() {
-            //Si l'instruction est de type "OUT"
-            if(script[currentInstruction].pinMode === "OUT")
-            {
-                console.log("OUT");
-                console.log(script[currentInstruction]);
-                //Dans le cas d'une pin numérique
-                if(script[currentInstruction].pin === 0)
+
+    if($("#jouerEditeur").text() == "Jouer"){
+        if(currentInstruction >= 0 && currentInstruction < script.length)
+        {
+            setTimeout(function() {
+                //Si l'instruction est de type "OUT"
+                if(script[currentInstruction].pinMode === "OUT")
                 {
-                    //on indique à la pin son mode de fonctionnement
-                    board.pinMode(script[currentInstruction].pinNumber, board.MODES.OUT);
-                    //on execute l'instruction
-                    board.digitalWrite(script[currentInstruction].pinNumber, (script[currentInstruction].value === 0 ? board.LOW : board.HIGH));
+                    console.log("OUT");
+                    console.log(script[currentInstruction]);
+                    //Dans le cas d'une pin numérique
+                    if(script[currentInstruction].pin === 0)
+                    {
+                        //on indique à la pin son mode de fonctionnement
+                        board.pinMode(script[currentInstruction].pinNumber, board.MODES.OUT);
+                        //on execute l'instruction
+                        board.digitalWrite(script[currentInstruction].pinNumber, (script[currentInstruction].value === 0 ? board.LOW : board.HIGH));
+                    }
+                    //dans le cas d'une pin analogique
+                    else if(script[currentInstruction].pin === 1)
+                    {
+                        //on indique à la pin son mode de fonctionnement
+                        board.pinMode(script[currentInstruction].pinNumber, board.MODES.OUT);
+                        //on execute l'instruction
+                        board.analogWrite(script[currentInstruction].pinNumber, script[currentInstruction].value );
+                    }
                 }
-                //dans le cas d'une pin analogique
-                else if(script[currentInstruction].pin === 1)
+                //Si l'instruction est de type "SERVO"
+                else if(script[currentInstruction].pinMode === "SERVO")
                 {
+                    console.log("SERVO");
+                    console.log(script[currentInstruction]);
                     //on indique à la pin son mode de fonctionnement
-                    board.pinMode(script[currentInstruction].pinNumber, board.MODES.OUT);
+                    board.pinMode(script[currentInstruction].pinNumber, board.MODES.SERVO);
                     //on execute l'instruction
-                    board.analogWrite(script[currentInstruction].pinNumber, script[currentInstruction].value );
+                    board.servoWrite(script[currentInstruction].pinNumber, script[currentInstruction].value);
                 }
-            }
-            //Si l'instruction est de type "SERVO"
-            else if(script[currentInstruction].pinMode === "SERVO")
-            {
-                console.log("SERVO");
-                console.log(script[currentInstruction]);
-                //on indique à la pin son mode de fonctionnement
-                board.pinMode(script[currentInstruction].pinNumber, board.MODES.SERVO);
-                //on execute l'instruction
-                board.servoWrite(script[currentInstruction].pinNumber, script[currentInstruction].value);
-            }
-            //Si l'instruction est de type "PWM"
-            else if(script[currentInstruction].pinMode === "PWM")
-            {
-                console.log("PWM");
-                console.log(script[currentInstruction]);
-                //on indique à la pin son mode de fonctionnement
-                board.pinMode(script[currentInstruction].pinNumber, board.MODES.PWM);
-                //on execute l'instruction
-                board.analogWrite(script[currentInstruction].pinNumber, script[currentInstruction].value);
-            }
-            currentInstruction++;
-            interprete();            
-        }, 1000);
-    }
-    else
-    {
-        currentInstruction = 0;
+                //Si l'instruction est de type "PWM"
+                else if(script[currentInstruction].pinMode === "PWM")
+                {
+                    console.log("PWM");
+                    console.log(script[currentInstruction]);
+                    //on indique à la pin son mode de fonctionnement
+                    board.pinMode(script[currentInstruction].pinNumber, board.MODES.PWM);
+                    //on execute l'instruction
+                    board.analogWrite(script[currentInstruction].pinNumber, script[currentInstruction].value);
+                }
+                currentInstruction++;
+                interprete();            
+            }, 1000);
+        }
+        else
+        {
+            currentInstruction = 0;
+        }
     }
 }
