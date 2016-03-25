@@ -64,10 +64,8 @@ function pinNum(){
 	// Fonction permettant l'affichage des éléments graphiques correspondants au mode INPUT
     this.htmlIn = function() {
     
-        var htmlString = "<input class='spaceDiv' type='checkbox' id='digitalSwitch" + this.getNumber() + "' size='8' >";
-		htmlString += "<label class='spaceDiv' for='digitalSwitch" + this.getNumber() + "' id='digitalSwitchLabel" + this.getNumber() + "'><div id='digitalSwitchLabelP" + this.getNumber() + "'>LOW</div></label>";
-        htmlString += "<div class='checkOscillo inlineDiv'><input id='oscilloNum" + this.getNumber() + "' type='checkbox'></div>";
-        
+        var htmlString = "<input class='voltRange spaceDiv' type='text' id='afficheValNum"+ this.getNumber() +"' readonly >";
+     
         return htmlString;    
     }
 
@@ -89,9 +87,7 @@ function pinNum(){
         htmlString += "<div class='inlineDiv sliderRange spaceDiv' id='slider-range" + this.getNumber() + "'></div>";
         htmlString += "<input class='spaceDiv' type='text' id='spinner" + this.getNumber() + "' min='0' max='180' readonly size='3'>";
 		htmlString += "<input class='spaceDiv' type='text' id='min" + this.getNumber() + "' min='0' max='180' value='0' readonly size='3'>";
-		htmlString += "<input class='spaceDiv' type='text' id='max" + this.getNumber() + "' min='0' max='180' value='180' readonly size='3'>";
-		htmlString +="<div class='checkOscillo inlineDiv'><input id='oscilloNum" + this.getNumber() + "' type='checkbox'></div>";
-        
+		htmlString += "<input class='spaceDiv' type='text' id='max" + this.getNumber() + "' min='0' max='180' value='180' readonly size='3'>";        
         
         return htmlString;
     
@@ -103,9 +99,7 @@ function pinNum(){
 
         var htmlString = "<div class='inlineDiv sliderRange spaceDiv' id='slider-range-v" + this.getNumber() + "'></div>";
         htmlString += "<input class='spaceDiv' type='text' id='spinnerV" + this.getNumber() + "' min='0' max='255' readonly size='3'>";
-        htmlString += "<input class='voltRange spaceDiv' type='text' id='afficheVolt"+ this.getNumber() +"' readonly >";
-        htmlString += "<div class='checkOscillo inlineDiv'><input id='oscilloNum" + this.getNumber() + "' type='checkbox'></div>";
-        
+        htmlString += "<input class='voltRange spaceDiv' type='text' id='afficheVolt"+ this.getNumber() +"' readonly >";        
         
         return htmlString;
     

@@ -26,13 +26,13 @@ function Arduino(tabPinN, tabPinA, editeur) {
 	}
 
 	// Permet l'affichage des pins analogiques
-	this.showAna = function () {
+	this.showAna = function (disabled) {
 		var htmlString = "";
 		$.each(this.tabPinA, function (i, n) {
 			n.setNumber(i);
 		    htmlString += "<div class='row' id='A" + n.getNumber() + "'>";
 			htmlString += n.htmlBase();
-		    htmlString += n.toHtml(n.getPinMode());
+		    htmlString += n.toHtml(n.getPinMode(),disabled);
 		    htmlString += "</div>";
         });
 		$("div#ana").html(htmlString);

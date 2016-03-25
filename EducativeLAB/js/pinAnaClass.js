@@ -6,11 +6,11 @@ function pinAna(){
     pin.call(this); //Héritage Javascript
 	
 	// Permet de lancer la fonction correspondant au mode de la pin
-    this.toHtml = function(pinMode) {
+    this.toHtml = function(pinMode, disabled) {
 
         if(pinMode == "IN")
         {
-            return this.htmlIn();
+            return this.htmlIn(disabled);
         }
         else if(pinMode == "OUT")
         {
@@ -50,11 +50,16 @@ function pinAna(){
     }
 
 	// Fonction permettant l'affichage des éléments graphiques correspondants au mode INPUT
-    this.htmlIn = function() {
+    this.htmlIn = function(disabled) {
     
         var htmlString = "<input class='voltRange spaceDiv' type='text' id='afficheVal"+ this.getNumber() +"' readonly >";
 		htmlString += "<input class='voltRange spaceDiv' type='text' id='afficheVoltAna"+ this.getNumber() +"' readonly >";
-		htmlString += "<div class='checkOscillo inlineDiv'><input id='oscilloAna" + this.getNumber() + "' type='checkbox'></div>";
+		if(disabled){
+			htmlString += "<div class='checkOscillo inlineDiv'><input id='oscilloAna" + this.getNumber() + "' type='checkbox' disabled=true></div>";
+		} else {
+			 		htmlString += "<div class='checkOscillo inlineDiv'><input id='oscilloAna" + this.getNumber() + "' type='checkbox'></div>";
+		}
+
 
         return htmlString;    
     }
